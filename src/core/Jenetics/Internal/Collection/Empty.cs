@@ -50,8 +50,8 @@ namespace Jenetics.Internal.Collection
 
             public T this[int index]
             {
-                get => throw new IndexOutOfRangeException("MutableSeq is empty.");
-                set => throw new IndexOutOfRangeException("MutableSeq is empty.");
+                get { throw new IndexOutOfRangeException("MutableSeq is empty."); }
+                set { throw new IndexOutOfRangeException("MutableSeq is empty."); }
             }
 
             public IImmutableSeq<T> ToImmutableSeq()
@@ -131,7 +131,9 @@ namespace Jenetics.Internal.Collection
                 return GetEnumerator();
             }
 
-            public T this[int index] => throw new IndexOutOfRangeException("ImmutableSeq is empty.");
+            public T this[int index] {
+                get { throw new IndexOutOfRangeException("ImmutableSeq is empty."); }
+            }
 
             public int Length => 0;
 

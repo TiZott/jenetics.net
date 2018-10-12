@@ -93,21 +93,21 @@ namespace Jenetics.Engine
 
         public override bool Equals(object obj)
         {
-            return obj is EvolutionDurations durations &&
+            return obj is EvolutionDurations &&
                    Equals(_offspringSelectionDuration,
-                       durations._offspringSelectionDuration) &&
+                       (obj as EvolutionDurations)._offspringSelectionDuration) &&
                    Equals(_survivorsSelectionDuration,
-                       durations._survivorsSelectionDuration) &&
+                       (obj as EvolutionDurations)._survivorsSelectionDuration) &&
                    Equals(_offspringAlterDuration,
-                       durations._offspringAlterDuration) &&
+                       (obj as EvolutionDurations)._offspringAlterDuration) &&
                    Equals(_offspringFilterDuration,
-                       durations._offspringFilterDuration) &&
+                       (obj as EvolutionDurations)._offspringFilterDuration) &&
                    Equals(_survivorFilterDuration,
-                       durations._survivorFilterDuration) &&
+                       (obj as EvolutionDurations)._survivorFilterDuration) &&
                    Equals(_evaluationDuration,
-                       durations._evaluationDuration) &&
+                       (obj as EvolutionDurations)._evaluationDuration) &&
                    Equals(_evolveDuration,
-                       durations._evolveDuration);
+                       (obj as EvolutionDurations)._evolveDuration);
         }
 
         public override int GetHashCode()

@@ -44,15 +44,14 @@ namespace Jenetics
                 var random = RandomRegistry.GetRandom();
                 var order = Math.Min(Order, population.Count);
 
-                int[] Individuals(int i)
-                {
-                    var ind = Subset(population.Count, order, random);
-                    ind[0] = i;
-                    return ind;
-                }
-
                 count = Internal.Math.random.Indexes(random, population.Count, Probability)
-                    .Select(Individuals).Select(i => Recombine(population, i, generation)).Sum();
+                    .Select(
+                        delegate( int i )
+                        {
+                            var ind = Subset(population.Count, order, random);
+                            ind[0] = i;
+                            return ind;
+                        } ).Select(i => Recombine(population, i, generation)).Sum();
             }
 
             return count;

@@ -113,12 +113,11 @@ namespace Jenetics
         {
             var index = new IntRef();
 
-            CharacterGene GeneFactory()
-            {
-                return CharacterGene.Of(alleles[index.Value++], validChars);
-            }
-
-            var genes = MutableSeq.OfLength<CharacterGene>(alleles.Length).Fill(GeneFactory).ToImmutableSeq();
+            var genes = MutableSeq.OfLength<CharacterGene>(alleles.Length).Fill(
+                delegate () {
+                    return CharacterGene.Of(alleles[index.Value++], validChars);
+                }
+                ).ToImmutableSeq();
 
             return new CharacterChromosome(genes);
         }

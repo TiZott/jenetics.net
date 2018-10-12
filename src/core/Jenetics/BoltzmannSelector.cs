@@ -59,7 +59,9 @@ namespace Jenetics
             if (ProbabilitySelector.Eq(diff, 0.0))
             {
                 // Set equal probabilities if diff (almost) zero.
-                Array.Fill(fitness, 1.0 / fitness.Length);
+                //Array.Fill(fitness, 1.0 / fitness.Length);
+                for( int index = 0; index < fitness.Length; index++ )
+                    fitness[ index ] = 1.0 / fitness.Length;
             }
             else
             {
@@ -77,8 +79,8 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is BoltzmannSelector<TGene, TAllele> selector &&
-                   Comparer<double>.Default.Compare(_b, selector._b) == 0;
+            return obj is BoltzmannSelector<TGene, TAllele> &&
+                   Comparer<double>.Default.Compare(_b, (obj as BoltzmannSelector<TGene, TAllele>)._b) == 0;
         }
 
         public override int GetHashCode()

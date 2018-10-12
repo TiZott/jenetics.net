@@ -58,9 +58,9 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is LinearRankSelector<TGene, TAllele> selector &&
-                   ProbabilitySelector.Eq(selector._nminus, _nminus) &&
-                   ProbabilitySelector.Eq(selector._nplus, _nplus);
+            return obj is LinearRankSelector<TGene, TAllele> &&
+                   ProbabilitySelector.Eq((obj as LinearRankSelector<TGene, TAllele>)._nminus, _nminus) &&
+                   ProbabilitySelector.Eq((obj as LinearRankSelector<TGene, TAllele>)._nplus, _nplus);
         }
 
         public override int GetHashCode()

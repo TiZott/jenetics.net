@@ -37,14 +37,13 @@ namespace Jenetics
 
         private static IImmutableSeq<IAlterer<TGene, TAllele>> Normalize(ISeq<IAlterer<TGene, TAllele>> alterers)
         {
-            IEnumerable<IAlterer<TGene, TAllele>> Mapper(IAlterer<TGene, TAllele> a)
-            {
-                return a is CompositeAlterer<TGene, TAllele> alterer
-                    ? alterer.Alterers
-                    : Enumerable.Repeat(a, 1);
-            }
-
-            return alterers.SelectMany(Mapper).ToList().ToImmutableSeq();
+            return alterers.SelectMany(
+                delegate( IAlterer< TGene, TAllele> a )
+                {
+                    return a is CompositeAlterer<TGene, TAllele>
+                        ? (a as CompositeAlterer<TGene, TAllele>).Alterers
+                        : Enumerable.Repeat(a, 1);
+                } ).ToList().ToImmutableSeq();
         }
 
         public override int Alter(Population<TGene, TAllele> population, long generation)
@@ -54,8 +53,8 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is CompositeAlterer<TGene, TAllele> alterer &&
-                   Equality.Eq(alterer.Alterers, Alterers);
+            return obj is CompositeAlterer<TGene, TAllele> &&
+                   Equality.Eq((obj as CompositeAlterer<TGene, TAllele>).Alterers, Alterers);
         }
 
         public override int GetHashCode()

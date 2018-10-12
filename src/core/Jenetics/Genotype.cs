@@ -109,7 +109,7 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is Genotype<TGene> genotype && Equality.Eq(_chromosomes, genotype._chromosomes);
+            return obj is Genotype<TGene> && Equality.Eq(_chromosomes, (obj as Genotype<TGene>)._chromosomes);
         }
 
         public override int GetHashCode()

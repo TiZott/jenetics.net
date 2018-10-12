@@ -53,8 +53,8 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is ExponentialRankSelector<TGene, TAllele> selector &&
-                   Comparer<double>.Default.Compare(_c, selector._c) == 0;
+            return obj is ExponentialRankSelector<TGene, TAllele> &&
+                   Comparer<double>.Default.Compare(_c, (obj as ExponentialRankSelector<TGene, TAllele>)._c) == 0;
         }
 
         public override int GetHashCode()

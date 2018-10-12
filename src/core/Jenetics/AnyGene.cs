@@ -55,8 +55,8 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is AnyGene<TAllele> gene &&
-                   Equality.Eq(gene.Allele, Allele);
+            return obj is AnyGene<TAllele> &&
+                   Equality.Eq( (obj as AnyGene<TAllele>).Allele, Allele);
         }
 
         public override int GetHashCode()

@@ -105,7 +105,7 @@ namespace Jenetics.Util
             for (int i = 0, n = seq.Length; i < n; ++i)
                 array[i] = seq[i];
             if (array.Length > seq.Length)
-                array[seq.Length] = default;
+                array[seq.Length] = default(T);
 
             return array;
         }

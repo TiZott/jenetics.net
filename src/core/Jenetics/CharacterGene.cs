@@ -108,9 +108,9 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is CharacterGene gene &&
-                   Equality.Eq(gene.Allele, Allele) &&
-                   Equality.Eq(gene._validCharacters, _validCharacters);
+            return obj is CharacterGene &&
+                   Equality.Eq((obj as CharacterGene).Allele, Allele) &&
+                   Equality.Eq((obj as CharacterGene)._validCharacters, _validCharacters);
         }
 
         public override int GetHashCode()

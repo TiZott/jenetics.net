@@ -90,8 +90,8 @@ namespace Jenetics.Internal.Math
 
         public override bool Equals(object obj)
         {
-            return obj is DoubleAdder adder &&
-                   Equality.Eq(DoubleValue, adder.DoubleValue);
+            return obj is DoubleAdder &&
+                   Equality.Eq(DoubleValue, (obj as DoubleAdder).DoubleValue);
         }
 
         public override int GetHashCode()

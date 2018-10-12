@@ -43,8 +43,8 @@ namespace Jenetics.Util
 
         public static IImmutableSeq<T> Of<T>(IEnumerable<T> values)
         {
-            return values is IImmutableSeq<T> of
-                ? of
+            return values is IImmutableSeq<T>
+                ? values as IImmutableSeq<T>
                 : values is IMutableSeq<T>
                     ? ((IMutableSeq<T>) values).ToImmutableSeq()
                     : MutableSeq.Of(values).ToImmutableSeq();

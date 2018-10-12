@@ -198,9 +198,9 @@ namespace Jenetics.Engine
             _invalidCount = info.GetInt32("_invalidCount");
             _alterCount = info.GetInt32("_alterCount");
 
-            _best = new Lazy<Phenotype<TGene, TAllele>>(
+            _best = new Lazy<Phenotype<TGene, TAllele>>( () =>
                 (Phenotype<TGene, TAllele>) info.GetValue("_best", typeof(Phenotype<TGene, TAllele>)));
-            _worst = new Lazy<Phenotype<TGene, TAllele>>(
+            _worst = new Lazy<Phenotype<TGene, TAllele>>( () =>
                 (Phenotype<TGene, TAllele>) info.GetValue("_worst", typeof(Phenotype<TGene, TAllele>)));
         }
 
@@ -266,12 +266,12 @@ namespace Jenetics.Engine
 
         public TAllele GetBestFitness()
         {
-            return _best.Value != null ? _best.Value.GetFitness() : default;
+            return _best.Value != null ? _best.Value.GetFitness() : default(TAllele);
         }
 
         public TAllele GetWorstFitness()
         {
-            return _worst.Value != null ? _worst.Value.GetFitness() : default;
+            return _worst.Value != null ? _worst.Value.GetFitness() : default(TAllele);
         }
 
         public Optimize GetOptimize()
@@ -291,25 +291,25 @@ namespace Jenetics.Engine
 
         public override bool Equals(object obj)
         {
-            return obj is EvolutionResult<TGene, TAllele> result &&
+            return obj is EvolutionResult<TGene, TAllele> &&
                    Equals(_optimize,
-                       result._optimize) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._optimize) &&
                    Equals(_population,
-                       result._population) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._population) &&
                    Equals(_generation,
-                       result._generation) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._generation) &&
                    Equals(_totalGenerations,
-                       result._totalGenerations) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._totalGenerations) &&
                    Equals(_durations,
-                       result._durations) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._durations) &&
                    Equals(_killCount,
-                       result._killCount) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._killCount) &&
                    Equals(_invalidCount,
-                       result._invalidCount) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._invalidCount) &&
                    Equals(_alterCount,
-                       result._alterCount) &&
+                       (obj as EvolutionResult<TGene, TAllele>)._alterCount) &&
                    Equals(GetBestFitness(),
-                       result.GetBestFitness()
+                       (obj as EvolutionResult<TGene, TAllele>).GetBestFitness()
                    );
         }
 

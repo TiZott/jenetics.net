@@ -51,10 +51,10 @@ namespace Jenetics
             _genotype = (Genotype<TGene>) info.GetValue("_genotype", typeof(Genotype<TGene>));
             _generation = info.GetInt64("_generation");
 
-            _rawFitness = new Lazy<TAllele>((TAllele) info.GetValue("_rawFitness", typeof(TAllele)));
-            _fitness = new Lazy<TAllele>((TAllele) info.GetValue("_fitness", typeof(TAllele)));
+            _rawFitness = new Lazy<TAllele>( () => (TAllele) info.GetValue("_rawFitness", typeof(TAllele)));
+            _fitness = new Lazy<TAllele>( () => (TAllele) info.GetValue("_fitness", typeof(TAllele)));
 
-            _function = a => default;
+            _function = a => default(TAllele);
             _scaler = a => a;
         }
 
@@ -122,11 +122,11 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is Phenotype<TGene, TAllele> phenotype &&
-                   Equality.Eq(GetFitness(), phenotype.GetFitness()) &&
-                   Equality.Eq(GetRawFitness(), phenotype.GetRawFitness()) &&
-                   Equality.Eq(_genotype, phenotype._genotype) &&
-                   Equality.Eq(_generation, phenotype._generation);
+            return obj is Phenotype<TGene, TAllele> &&
+                   Equality.Eq(GetFitness(), (obj as Phenotype<TGene, TAllele>).GetFitness()) &&
+                   Equality.Eq(GetRawFitness(), (obj as Phenotype<TGene, TAllele>).GetRawFitness()) &&
+                   Equality.Eq(_genotype, (obj as Phenotype<TGene, TAllele>)._genotype) &&
+                   Equality.Eq(_generation, (obj as Phenotype<TGene, TAllele>)._generation);
         }
 
         public override int GetHashCode()

@@ -69,9 +69,9 @@ namespace Jenetics.Util
         public static IMutableSeq<T> Of<T>(IEnumerable<T> values)
         {
             IMutableSeq<T> mseq;
-            if (values is IImmutableSeq<T> immutableSeq)
+            if (values is IImmutableSeq<T>)
             {
-                var seq = immutableSeq;
+                var seq = (values as IImmutableSeq<T>);
                 mseq = seq.IsEmpty ? Empty<T>() : Of<T>(seq);
             }
             else if (values is IMutableSeq<T>)
@@ -97,7 +97,7 @@ namespace Jenetics.Util
 
         public static IMutableSeq<T> Of<T>(ISeq<T> values)
         {
-            return values is ArrayMutableSeq<T> seq ? seq.Copy() : OfLength<T>(values.Count()).SetAll(values);
+            return values is ArrayMutableSeq<T> ? (values as ArrayMutableSeq<T>).Copy() : OfLength<T>(values.Count()).SetAll(values);
         }
 
         public static IMutableSeq<T> Of<T>(Func<T> supplier, int length)

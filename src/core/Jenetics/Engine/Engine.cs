@@ -144,17 +144,17 @@ namespace Jenetics.Engine
             return _offspringCount + _survivorsCount;
         }
 
+        private IEnumerable<Phenotype<TGene, TAllele>> PhenotypeFactory( long generation )
+        {
+            while (true)
+                yield return NewPhenotype(generation);
+        }
+
         private EvolutionStart<TGene, TAllele> EvolutionStart(IEnumerable<Genotype<TGene>> genotypes, long generation)
         {
             var pt = genotypes.Select(gt => Phenotype.Of(gt, generation, _fitnessFunction, _fitnessScaler));
 
-            IEnumerable<Phenotype<TGene, TAllele>> F()
-            {
-                while (true)
-                    yield return NewPhenotype(generation);
-            }
-
-            var stream = pt.Concat(F());
+            var stream = pt.Concat(PhenotypeFactory( generation ));
 
             var population = stream
                 .Take(GetPopulationSize())
@@ -170,13 +170,7 @@ namespace Jenetics.Engine
         {
             var pt = population.Select(p => p.NewInstance(p.GetGeneration(), _fitnessFunction, _fitnessScaler));
 
-            IEnumerable<Phenotype<TGene, TAllele>> F()
-            {
-                while (true)
-                    yield return NewPhenotype(generation);
-            }
-
-            var stream = pt.Concat(F());
+            var stream = pt.Concat(PhenotypeFactory( generation ) );
 
             var pop = stream
                 .Take(GetPopulationSize())

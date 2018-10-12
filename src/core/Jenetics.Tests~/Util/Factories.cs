@@ -18,41 +18,32 @@
 
 using System;
 
-namespace Jenetics.Internal.Util
+namespace Jenetics.Util
 {
-    [Serializable]
-    public class IntRef
+    public static class Factories
     {
-        private int _value;
-
-        public IntRef() : this(0)
+        public static Func<int> Int()
         {
+            return Int(1);
         }
 
-        public IntRef(int initialValue)
+        public static Func<int> Int(int step)
         {
-            Value = initialValue;
+            return Int(0, step);
         }
 
-        public int Value
+        public static Func<int> Int(int start, int step)
         {
-            get => _value;
-            set => _value = value;
-        }
+            var value = start;
 
-        public override bool Equals(object obj)
-        {
-            return obj is IntRef && (obj as IntRef)._value == _value;
-        }
+            Func<int> Next = delegate ()
+            {
+                var next = value;
+                value += step;
+                return next;
+            };
 
-        public override int GetHashCode()
-        {
-            return _value.GetHashCode();
-        }
-
-        public override string ToString()
-        {
-            return _value.ToString();
+            return Next;
         }
     }
 }

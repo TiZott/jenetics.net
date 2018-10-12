@@ -107,9 +107,9 @@ namespace Jenetics
             var chromosome = new BitChromosome(Bits.NewArray(genes.Length), genes.Length);
             var ones = 0;
 
-            if (genes is BitGeneImmutableSeq seq)
+            if (genes is BitGeneImmutableSeq)
             {
-                var iseq = seq;
+                var iseq = genes as BitGeneImmutableSeq;
                 iseq.CopyTo(chromosome._genes);
                 ones = Bits.Count(chromosome._genes);
             }

@@ -53,10 +53,10 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is ExponentialScaler scaler &&
-                   Equality.Eq(scaler._a, _a) &&
-                   Equality.Eq(scaler._b, _b) &&
-                   Equality.Eq(scaler._c, _c);
+            return obj is ExponentialScaler &&
+                   Equality.Eq((obj as ExponentialScaler)._a, _a) &&
+                   Equality.Eq((obj as ExponentialScaler)._b, _b) &&
+                   Equality.Eq((obj as ExponentialScaler)._c, _c);
         }
 
         public override int GetHashCode()

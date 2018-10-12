@@ -85,9 +85,9 @@ namespace Jenetics
 
         public override bool Equals(object obj)
         {
-            return obj is EnumGene<TAllele> gene &&
-                   Equality.Eq(gene._alleleIndex, _alleleIndex) &&
-                   Equality.Eq(gene._validAlleles, _validAlleles);
+            return obj is EnumGene<TAllele> &&
+                   Equality.Eq((obj as EnumGene<TAllele>)._alleleIndex, _alleleIndex) &&
+                   Equality.Eq((obj as EnumGene<TAllele>)._validAlleles, _validAlleles);
         }
 
         public override int GetHashCode()

@@ -250,7 +250,7 @@ namespace Jenetics.Internal.Util
 
         public static byte[] FromByteString(string data)
         {
-            var parts = data.Split("|");
+            var parts = data.Split('|');
             var bytes = new byte[parts.Length];
 
             for (var i = 0; i < parts.Length; ++i)
