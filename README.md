@@ -1,9 +1,6 @@
 # Jenetics.Net
 
-![Build Status](https://travis-ci.org/rmeindl/jenetics.net.svg?branch=master)
-
-**Jenetics.Net** is a port of the popular Java Genetic Algorithm framework [Jenetics](http://jenetics.io) to .NET Core.
-This is a Unity3D compatible C# 4.x variant of this port.
+**Jenetics.Net** is a port of the popular Java Genetic Algorithm framework [Jenetics](http://jenetics.io) to a Unity3D compatible C# 4.x.
 
 ## Documentation
 
