@@ -182,7 +182,7 @@ namespace Jenetics.Engine
 
         public Builder<TGene, TAllele> TaskScheduler(TaskScheduler executor)
         {
-            _taskScheduler = NonNull(executor);
+            _taskScheduler = executor;
             return this;
         }
     }

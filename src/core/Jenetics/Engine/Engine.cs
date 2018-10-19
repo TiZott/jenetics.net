@@ -257,67 +257,125 @@ namespace Jenetics.Engine
 
             var startPopulation = start.Population;
 
-            var evaluateTimer = Timer.Of().Start();
-            Evaluate(startPopulation, cancellationToken);
-            evaluateTimer.Stop();
+            if (_taskScheduler != null)
+            {
+                var evaluateTimer = Timer.Of().Start();
+                Evaluate(startPopulation, cancellationToken);
+                evaluateTimer.Stop();
 
-            var taskFactory = new TaskFactory(cancellationToken, TaskCreationOptions.None, TaskContinuationOptions.None,
-                _taskScheduler);
+                var taskFactory = new TaskFactory(cancellationToken, TaskCreationOptions.None, TaskContinuationOptions.None,
+                    _taskScheduler);
 
-            var offspring = taskFactory.StartNewTimed(() => SelectOffspring(startPopulation));
+                var offspring = taskFactory.StartNewTimed(() => SelectOffspring(startPopulation));
 
-            var survivors = taskFactory.StartNewTimed(() => SelectSurvivors(startPopulation));
+                var survivors = taskFactory.StartNewTimed(() => SelectSurvivors(startPopulation));
 
-            var alteredOffspring = offspring.ContinueWithTimed(t => Alter(t.Result.Result, start.Generation));
+                var alteredOffspring = offspring.ContinueWithTimed(t => Alter(t.Result.Result, start.Generation));
 
-            var filteredSurvivors =
-                survivors.ContinueWithTimed(t => Filter(t.Result.Result, start.Generation));
+                var filteredSurvivors =
+                    survivors.ContinueWithTimed(t => Filter(t.Result.Result, start.Generation));
 
-            var filteredOffspring =
-                alteredOffspring.ContinueWithTimed(t => Filter(t.Result.Result.Population, start.Generation));
+                var filteredOffspring =
+                    alteredOffspring.ContinueWithTimed(t => Filter(t.Result.Result.Population, start.Generation));
 
-            var population = taskFactory.ContinueWhenAll(
-                new[] {filteredSurvivors, filteredOffspring},
-                tasks =>
+                var population = taskFactory.ContinueWhenAll(
+                    new[] { filteredSurvivors, filteredOffspring },
+                    tasks =>
+                    {
+                        var pop = new Population<TGene, TAllele>(filteredSurvivors.Result.Result.Population.Count +
+                                                                 filteredOffspring.Result.Result.Population.Count);
+                        pop.AddAll(filteredSurvivors.Result.Result.Population);
+                        pop.AddAll(filteredOffspring.Result.Result.Population);
+                        return pop;
+                    });
+
+                population.Wait(cancellationToken);
+
+                var result = TimedResult.Of(() => Evaluate(population.Result, cancellationToken))();
+
+                var durations = EvolutionDurations.Of(
+                    offspring.Result.Duration,
+                    survivors.Result.Duration,
+                    alteredOffspring.Result.Duration,
+                    filteredOffspring.Result.Duration,
+                    filteredSurvivors.Result.Duration,
+                    result.Duration.Add(evaluateTimer.GetTime()),
+                    timer.Stop().GetTime()
+                );
+
+                var killCount =
+                    filteredOffspring.Result.Result.KillCount +
+                    filteredSurvivors.Result.Result.KillCount;
+
+                var invalidCount =
+                    filteredOffspring.Result.Result.InvalidCount +
+                    filteredSurvivors.Result.Result.InvalidCount;
+
+                return EvolutionResult.Of(
+                    _optimize,
+                    result.Result,
+                    start.Generation,
+                    durations,
+                    killCount,
+                    invalidCount,
+                    alteredOffspring.Result.Result.AlterCount
+                );
+            } else {
+                var evaluateTimer = Timer.Of().Start();
+                foreach (var phenotype in startPopulation)
+                    phenotype.Evaluate();
+                evaluateTimer.Stop();
+
+                var offspring = TimedResult.Of(() => SelectOffspring(startPopulation))();
+
+                var survivors = TimedResult.Of(() => SelectSurvivors(startPopulation))();
+
+                var alteredOffspring = TimedResult.Of(() => Alter(offspring.Result, start.Generation))();
+
+                var filteredSurvivors = TimedResult.Of(() => Filter(survivors.Result, start.Generation))();
+
+                var filteredOffspring = TimedResult.Of(() => Filter(alteredOffspring.Result.Population, start.Generation))();
+
+                var population = new Population<TGene, TAllele>(filteredSurvivors.Result.Population.Count +
+                                                                 filteredOffspring.Result.Population.Count);
+                population.AddAll(filteredSurvivors.Result.Population);
+                population.AddAll(filteredOffspring.Result.Population);
+  
+                var result = TimedResult.Of(() =>
                 {
-                    var pop = new Population<TGene, TAllele>(filteredSurvivors.Result.Result.Population.Count +
-                                                             filteredOffspring.Result.Result.Population.Count);
-                    pop.AddAll(filteredSurvivors.Result.Result.Population);
-                    pop.AddAll(filteredOffspring.Result.Result.Population);
-                    return pop;
-                });
+                    foreach (var phenotype in population)
+                        phenotype.Evaluate();
+                    return population;
+                })();
 
-            population.Wait(cancellationToken);
+                var durations = EvolutionDurations.Of(
+                    offspring.Duration,
+                    survivors.Duration,
+                    alteredOffspring.Duration,
+                    filteredOffspring.Duration,
+                    filteredSurvivors.Duration,
+                    result.Duration.Add(evaluateTimer.GetTime()),
+                    timer.Stop().GetTime()
+                );
 
-            var result = TimedResult.Of(() => Evaluate(population.Result, cancellationToken))();
+                var killCount =
+                    filteredOffspring.Result.KillCount +
+                    filteredSurvivors.Result.KillCount;
 
-            var durations = EvolutionDurations.Of(
-                offspring.Result.Duration,
-                survivors.Result.Duration,
-                alteredOffspring.Result.Duration,
-                filteredOffspring.Result.Duration,
-                filteredSurvivors.Result.Duration,
-                result.Duration.Add(evaluateTimer.GetTime()),
-                timer.Stop().GetTime()
-            );
+                var invalidCount =
+                    filteredOffspring.Result.InvalidCount +
+                    filteredSurvivors.Result.InvalidCount;
 
-            var killCount =
-                filteredOffspring.Result.Result.KillCount +
-                filteredSurvivors.Result.Result.KillCount;
-
-            var invalidCount =
-                filteredOffspring.Result.Result.InvalidCount +
-                filteredSurvivors.Result.Result.InvalidCount;
-
-            return EvolutionResult.Of(
-                _optimize,
-                result.Result,
-                start.Generation,
-                durations,
-                killCount,
-                invalidCount,
-                alteredOffspring.Result.Result.AlterCount
-            );
+                return EvolutionResult.Of(
+                    _optimize,
+                    result.Result,
+                    start.Generation,
+                    durations,
+                    killCount,
+                    invalidCount,
+                    alteredOffspring.Result.AlterCount
+                );
+            }
         }
 
         private Population<TGene, TAllele> SelectOffspring(Population<TGene, TAllele> population)
